@@ -1,20 +1,14 @@
 import type { TimestampValue } from "./common";
 
-export type ReportType =
-  | "Monthly"
-  | "Quarterly"
-  | "Other";
-
-  export type HealthStatus =
-  | "Healthy"
-  | "Warning"
-  | "Critical"
-  | "Unknown";
+import type {
+  ReportType,
+  HealthStatus,
+} from "../constants";
 
 export interface ProjectSnapshot {
   id?: string;
 
-  // Project reference
+  // Official project identifier
   projectId: string;
 
   // Reporting information
@@ -24,7 +18,7 @@ export interface ProjectSnapshot {
 
   reportDate: TimestampValue | string;
 
-  // Financial information
+  // Financial information (INR crore)
   originalCostCr?: number | null;
 
   revisedCostCr?: number | null;

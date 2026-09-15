@@ -5,17 +5,19 @@ import type { Project } from "../../../shared/types/project";
 import type {
   ProjectType,
   ProjectStatus,
-  Sectors,
+  ProjectDomain,
 } from "../../../shared/constants";
 
 import {
   PROJECT_TYPES,
   PROJECT_STATUSES,
-  SECTORS,
+  PROJECT_DOMAINS,
 } from "../../../shared/constants";
 import "./AddProjectForm.css";
 
 import { createProject } from "../services/projectService";
+
+import { createProjectSnapshot } from "../services/projectSnapshotService";
 
 interface AddProjectFormProps {
   onCancel: () => void;
@@ -32,13 +34,15 @@ function AddProjectForm({
   const [description, setDescription] = useState("");
 
 const [projectType, setProjectType] =
-  useState<ProjectType>(PROJECT_TYPES.ROAD);
+  useState<ProjectType>(PROJECT_TYPES[0]);
 
-const [sector, setSector] =
-  useState<Sectors>(SECTORS[0]);
+const [domain, setDomain] =
+  useState<ProjectDomain>(PROJECT_DOMAINS[0]);
 
 const [status, setStatus] =
   useState<ProjectStatus>(PROJECT_STATUSES[0]);
+
+  const [ministry, setMinistry] = useState("");
 
   const [implementingAgency, setImplementingAgency] = useState("");
 
@@ -64,6 +68,10 @@ const [status, setStatus] =
 
   if (!name.trim()) {
     return "Project name is required.";
+  }
+
+  if (!ministry.trim()) {
+    return "Ministry / department is required.";
   }
 
   if (!implementingAgency.trim()) {
@@ -128,38 +136,63 @@ const handleSubmit = async (
     setError(null);
     setSuccess(false);
 
-    const newProject: Omit<Project, "id"> = {
-     projectId: projectId.trim(),
+    const newProject: Omit<
+      Project,
+      "id" | "createdAt" | "updatedAt"
+    > = {
+      projectId: projectId.trim(),
 
-name: name.trim(),
+      projectName: name.trim(),
 
-description: description.trim(),
+      description: description.trim(),
+
+      domain,
 
       projectType,
-      sector,
 
-     implementingAgency:
-  implementingAgency.trim(),
+      ministry: ministry.trim(),
 
- location: {
-  state: state.trim(),
-  district: district.trim(),
-  city: city.trim(),
-},
+      implementingAgency:
+        implementingAgency.trim(),
 
-      budget: Number(budget),
-      expenditure: Number(expenditure),
+      state: state.trim(),
 
-      progressPercentage:
-        Number(progressPercentage),
+      district: district.trim(),
 
-      status,
+      city: city.trim(),
+
+      originalCostCr: Number(budget),
+
+      dataSource: "Manual Entry",
     };
 
 
     await createProject(
       newProject
     );
+
+
+    await createProjectSnapshot({
+      projectId: projectId.trim(),
+
+      reportType: "Other",
+
+      reportPeriod: "Initial",
+
+      reportDate: new Date(),
+
+      originalCostCr: Number(budget),
+
+      cumulativeExpenditureCr:
+        Number(expenditure),
+
+      physicalProgressPct:
+        Number(progressPercentage),
+
+      projectStatus: status,
+
+      sourceReport: "Manual Entry",
+    });
 
 
     setSuccess(true);
@@ -319,7 +352,7 @@ description: description.trim(),
                 )
               }
             >
-              {Object.values(PROJECT_TYPES).map(
+              {PROJECT_TYPES.map(
                 (type) => (
                   <option
                     key={type}
@@ -337,18 +370,18 @@ description: description.trim(),
           <div className="form-field">
 
             <label>
-              Sector
+              Domain
             </label>
 
             <select
-              value={sector}
+              value={domain}
               onChange={(e) =>
-                setSector(
-                  e.target.value as Sectors
+                setDomain(
+                  e.target.value as ProjectDomain
                 )
               }
             >
-              {SECTORS.map((item) => (
+              {PROJECT_DOMAINS.map((item) => (
                 <option
                   key={item}
                   value={item}
@@ -404,6 +437,25 @@ description: description.trim(),
 
 
         <div className="form-grid">
+
+          <div className="form-field">
+
+            <label>
+              Ministry / Department
+            </label>
+
+            <input
+              type="text"
+              placeholder="e.g. Ministry of Road Transport and Highways"
+              value={ministry}
+              onChange={(e) =>
+                setMinistry(e.target.value)
+              }
+              required
+            />
+
+          </div>
+
 
           <div className="form-field full-width">
 
@@ -517,7 +569,7 @@ description: description.trim(),
           <div className="form-field">
 
             <label>
-              Total Budget (₹)
+              Original Cost (₹ crore)
             </label>
 
             <input
@@ -536,7 +588,7 @@ description: description.trim(),
           <div className="form-field">
 
             <label>
-              Current Expenditure (₹)
+              Cumulative Expenditure (₹ crore)
             </label>
 
             <input

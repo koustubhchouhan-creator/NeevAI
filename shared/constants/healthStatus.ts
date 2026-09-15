@@ -1,7 +1,8 @@
 export const HEALTH_STATUSES = [
-  "Good",
-  "Moderate",
-  "Poor",
+  "Healthy",
+  "Warning",
+  "Critical",
+  "Unknown",
 ] as const;
 
 export type HealthStatus =

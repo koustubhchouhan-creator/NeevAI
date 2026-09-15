@@ -2,6 +2,7 @@ export const REPORT_TYPES = [
   "Monthly",
   "Quarterly",
   "Annual",
+  "Other",
 ] as const;
 
 export type ReportType =

@@ -302,6 +302,61 @@ const croreToRupees = (
 
 
 /* =========================================
+   PROJECT BUDGET (INR CRORE)
+========================================= */
+
+/**
+ * Budget priority:
+ *
+ * Revised Cost
+ * ↓
+ * Anticipated Cost
+ * ↓
+ * Original Snapshot Cost
+ * ↓
+ * Original Project Cost
+ */
+const getProjectBudgetCr = (
+  project: Project,
+  snapshot?: ProjectSnapshot
+): number => {
+
+  if (
+    snapshot?.revisedCostCr !==
+      undefined &&
+    snapshot.revisedCostCr !==
+      null
+  ) {
+    return snapshot.revisedCostCr;
+  }
+
+
+  if (
+    snapshot?.anticipatedCostCr !==
+      undefined &&
+    snapshot.anticipatedCostCr !==
+      null
+  ) {
+    return snapshot.anticipatedCostCr;
+  }
+
+
+  if (
+    snapshot?.originalCostCr !==
+      undefined &&
+    snapshot.originalCostCr !==
+      null
+  ) {
+    return snapshot.originalCostCr;
+  }
+
+
+  return project.originalCostCr ?? 0;
+
+};
+
+
+/* =========================================
    NORMALIZE RISK LEVEL
 ========================================= */
 
@@ -462,7 +517,10 @@ export const getDashboardAnalytics =
               const budget =
                 safeNumber(
                   croreToRupees(
-                    project.budgetCr
+                    getProjectBudgetCr(
+                      project,
+                      latestSnapshot
+                    )
                   )
                 );
 
@@ -504,9 +562,7 @@ export const getDashboardAnalytics =
 
               const status =
                 latestSnapshot
-                  ?.projectStatus
-                ??
-                project.status;
+                  ?.projectStatus;
 
 
               /* ---------------------------------

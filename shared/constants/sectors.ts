@@ -1,13 +1,7 @@
-  export const SECTORS = [
-  "Infrastructure",
-  "Transportation",
+export const PROJECT_DOMAINS = [
+  "Roads & Highways",
   "Healthcare",
-  "Education",
-  "Energy",
-  "Water & Sanitation",
-  "Urban Development",
-  "Other",
 ] as const;
 
-export type Sectors =
-  (typeof SECTORS)[number];
+export type ProjectDomain =
+  (typeof PROJECT_DOMAINS)[number];

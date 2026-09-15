@@ -1,6 +1,7 @@
 export * from "./analyticsStatus";
 export * from "./dataStatus";
 export * from "./healthStatus";
+export * from "./outcomeStatus";
 export * from "./predictionTypes";
 export * from "./projectStatus";
 export * from "./projectTypes";

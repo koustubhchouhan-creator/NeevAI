@@ -721,12 +721,29 @@ function ProjectDetails({
           <div className="detail-item">
 
             <span>
-              District / Location
+              District
             </span>
 
             <strong>
 
-              {project.districtOrLocation ??
+              {project.district ??
+                "Not available"}
+
+            </strong>
+
+          </div>
+
+
+
+          <div className="detail-item">
+
+            <span>
+              City
+            </span>
+
+            <strong>
+
+              {project.city ??
                 "Not available"}
 
             </strong>

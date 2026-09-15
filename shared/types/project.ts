@@ -1,8 +1,6 @@
 import type { TimestampValue } from "./common";
 
-export type ProjectDomain =
-  | "Roads & Highways"
-  | "Healthcare";
+import type { ProjectDomain } from "../constants";
 
 export interface Project {
   id?: string;
@@ -12,6 +10,8 @@ export interface Project {
 
   // Official project name
   projectName: string;
+
+  description?: string;
 
   // Domain
   domain: ProjectDomain;
@@ -28,12 +28,14 @@ export interface Project {
   // Location
   state?: string;
 
-  districtOrLocation?: string;
+  district?: string;
+
+  city?: string;
 
   // Approval
   approvalDate?: TimestampValue | string | null;
 
-  // Original approved project cost
+  // Original approved project cost (INR crore)
   originalCostCr?: number | null;
 
   // Original planned completion date

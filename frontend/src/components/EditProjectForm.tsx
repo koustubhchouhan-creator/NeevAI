@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { Project } from "../../../shared/types/project";
 
+import type { ProjectSnapshot } from "../../../shared/types/projectSnapshot";
+
 import type {
-  ProjectType,
   ProjectStatus,
-  Sectors,
+  ProjectDomain,
+  ProjectType,
 } from "../../../shared/constants";
 
 import {
   PROJECT_TYPES,
   PROJECT_STATUSES,
-  SECTORS,
+  PROJECT_DOMAINS,
 } from "../../../shared/constants";
 
 import {
   updateProject,
 } from "../services/projectService";
+
+import {
+  getProjectSnapshots,
+  updateProjectSnapshot,
+  createProjectSnapshot,
+} from "../services/projectSnapshotService";
 
 import "./EditProjectForm.css";
 
@@ -37,7 +45,7 @@ function EditProjectForm({
 }: EditProjectFormProps) {
 
   const [name, setName] =
-    useState(project.name);
+    useState(project.projectName);
 
   const [description, setDescription] =
     useState(
@@ -46,20 +54,21 @@ function EditProjectForm({
 
 
   const [projectType, setProjectType] =
-    useState<ProjectType>(
-      project.projectType
+    useState<string>(
+      project.projectType ??
+        PROJECT_TYPES[0]
     );
 
 
-  const [sector, setSector] =
-    useState<Sectors>(
-      project.sector
+  const [domain, setDomain] =
+    useState<ProjectDomain>(
+      project.domain
     );
 
 
-  const [status, setStatus] =
-    useState<ProjectStatus>(
-      project.status
+  const [ministry, setMinistry] =
+    useState(
+      project.ministry
     );
 
 
@@ -67,46 +76,126 @@ function EditProjectForm({
     implementingAgency,
     setImplementingAgency,
   ] = useState(
-    project.implementingAgency
+    project.implementingAgency ?? ""
   );
 
 
   const [state, setState] =
     useState(
-      project.location?.state ?? ""
+      project.state ?? ""
     );
 
 
   const [district, setDistrict] =
     useState(
-      project.location?.district ?? ""
+      project.district ?? ""
     );
 
 
   const [city, setCity] =
     useState(
-      project.location?.city ?? ""
+      project.city ?? ""
     );
 
 
   const [budget, setBudget] =
     useState(
-      project.budget.toString()
+      (project.originalCostCr ?? 0).toString()
     );
 
 
   const [expenditure, setExpenditure] =
-    useState(
-      project.expenditure.toString()
-    );
+    useState("");
 
 
   const [
     progressPercentage,
     setProgressPercentage,
-  ] = useState(
-    project.progressPercentage.toString()
-  );
+  ] = useState("");
+
+
+  const [status, setStatus] =
+    useState<ProjectStatus>(
+      PROJECT_STATUSES[0]
+    );
+
+
+  const [snapshot, setSnapshot] =
+    useState<ProjectSnapshot | null>(
+      null
+    );
+
+
+  useEffect(() => {
+
+    let active = true;
+
+    const loadSnapshot = async () => {
+
+      try {
+
+        const snapshots =
+          await getProjectSnapshots(
+            project.projectId
+          );
+
+        if (!active) {
+          return;
+        }
+
+        const latest =
+          snapshots.length > 0
+            ? snapshots[0]
+            : null;
+
+        setSnapshot(latest);
+
+        if (latest) {
+
+          setExpenditure(
+            (
+              latest.cumulativeExpenditureCr ??
+              0
+            ).toString()
+          );
+
+          setProgressPercentage(
+            (
+              latest.physicalProgressPct ??
+              0
+            ).toString()
+          );
+
+          if (
+            latest.projectStatus
+          ) {
+
+            setStatus(
+              latest.projectStatus as ProjectStatus
+            );
+
+          }
+
+        }
+
+      } catch (err) {
+
+        console.error(
+          "Failed to load latest snapshot:",
+          err
+        );
+
+      }
+
+    };
+
+    loadSnapshot();
+
+    return () => {
+      active = false;
+    };
+
+  }, [project.projectId]);
 
 
   const [submitting, setSubmitting] =
@@ -152,39 +241,85 @@ function EditProjectForm({
         project.id,
         {
 
-          name,
+          projectName: name,
 
           description,
 
           projectType,
 
-          sector,
+          domain,
 
-          status,
+          ministry,
 
           implementingAgency,
 
+          state,
 
-          location: {
-            state,
-            district,
-            city,
-          },
+          district,
+
+          city,
 
 
-          budget:
+          originalCostCr:
             Number(budget),
-
-
-          expenditure:
-            Number(expenditure),
-
-
-          progressPercentage:
-            Number(progressPercentage),
 
         }
       );
+
+
+      if (snapshot?.id) {
+
+        await updateProjectSnapshot(
+          snapshot.id,
+          {
+
+            originalCostCr:
+              Number(budget),
+
+            cumulativeExpenditureCr:
+              Number(expenditure),
+
+            physicalProgressPct:
+              Number(progressPercentage),
+
+            projectStatus: status,
+
+          }
+        );
+
+      } else {
+
+        await createProjectSnapshot(
+
+          {
+
+            projectId:
+              project.projectId,
+
+            reportType: "Other",
+
+            reportPeriod: "Initial",
+
+            reportDate: new Date(),
+
+            originalCostCr:
+              Number(budget),
+
+            cumulativeExpenditureCr:
+              Number(expenditure),
+
+            physicalProgressPct:
+              Number(progressPercentage),
+
+            projectStatus: status,
+
+            sourceReport: "Manual Entry",
+
+          }
+
+        );
+
+      }
 
 
       setSuccess(true);
@@ -357,9 +492,8 @@ function EditProjectForm({
                 }
               >
 
-                {Object.values(
-                  PROJECT_TYPES
-                ).map((type) => (
+                {PROJECT_TYPES.map(
+                  (type) => (
 
                   <option
                     key={type}
@@ -379,19 +513,19 @@ function EditProjectForm({
             <div className="edit-form-group">
 
               <label>
-                Sector
+                Domain
               </label>
 
               <select
-                value={sector}
+                value={domain}
                 onChange={(e) =>
-                  setSector(
-                    e.target.value as Sectors
+                  setDomain(
+                    e.target.value as ProjectDomain
                   )
                 }
               >
 
-                {SECTORS.map(
+                {PROJECT_DOMAINS.map(
                   (item) => (
 
                     <option
@@ -459,6 +593,24 @@ function EditProjectForm({
 
 
           <div className="edit-form-grid">
+
+            <div className="edit-form-group">
+
+              <label>
+                Ministry / Department
+              </label>
+
+              <input
+                type="text"
+                value={ministry}
+                onChange={(e) =>
+                  setMinistry(e.target.value)
+                }
+                required
+              />
+
+            </div>
+
 
             <div className="edit-form-group full-width">
 
@@ -571,7 +723,7 @@ function EditProjectForm({
             <div className="edit-form-group">
 
               <label>
-                Total Budget
+                Original Cost (₹ crore)
               </label>
 
               <input
@@ -591,7 +743,7 @@ function EditProjectForm({
             <div className="edit-form-group">
 
               <label>
-                Current Expenditure
+                Cumulative Expenditure (₹ crore)
               </label>
 
               <input
