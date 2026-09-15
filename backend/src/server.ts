@@ -1,14 +1,11 @@
 // src/server.ts
-import dotenv from "dotenv";
+import "./config/env";
 import app from "./app";
-import connectDB from "./config/db";
+import { connectDB } from "./config/db";
 
-dotenv.config({ path: ".env.example" }); // Load defaults; real .env will override
+const PORT = Number(process.env.PORT) || 5000;
 
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/neevai";
-
-connectDB(MONGODB_URI)
+connectDB(process.env.MONGODB_URI)
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

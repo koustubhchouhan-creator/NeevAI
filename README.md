@@ -296,6 +296,37 @@ Important data rules:
 - Maintain source-report traceability.
 - Prefer official project IDs for project matching.
 
+## Running Locally
+
+### Backend
+
+```bash
+# Install dependencies
+npm install
+
+# Start the API (falls back to an in-memory MongoDB when MONGODB_URI is unset)
+npm run dev
+```
+
+The API is served at `http://localhost:5000/api/v1`. Copy `backend/.env.example` to `backend/.env` to set the port, provide a real `MONGODB_URI`, or configure `CORS_ORIGIN`.
+
+### Frontend
+
+```bash
+# Move into the frontend package
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the dev server (proxies /api requests to the backend)
+npm run dev
+```
+
+The app is served at `http://localhost:5173`. Copy `frontend/.env.example` to `frontend/.env` only if the API base URL differs from the default.
+
+> Note: The frontend reads and writes all data through the backend REST API. The legacy Firebase module is retained but unused.
+
 ## Technology Stack
 
 ### Frontend

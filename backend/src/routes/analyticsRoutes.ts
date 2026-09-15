@@ -1,10 +1,13 @@
 // src/routes/analyticsRoutes.ts
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import {
+  getOverview,
+  getProjectAnalytics,
+} from "../controllers/analyticsController";
 
 const router = Router();
 
-router.get("/overview", (req: Request, res: Response) => {
-  res.json({ message: "Analytics overview placeholder" });
-});
+router.get("/overview", getOverview);
+router.get("/projects/:projectId", getProjectAnalytics);
 
 export default router;

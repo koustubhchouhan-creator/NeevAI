@@ -1,10 +1,9 @@
 // src/routes/comparisonRoutes.ts
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import { compareProjects } from "../controllers/comparisonController";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Comparison routes placeholder" });
-});
+router.get("/", compareProjects);
 
 export default router;

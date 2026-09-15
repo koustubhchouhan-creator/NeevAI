@@ -1,10 +1,21 @@
 // src/routes/predictionRoutes.ts
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import {
+  createPrediction,
+  deletePrediction,
+  getLatestPrediction,
+  getPrediction,
+  listPredictions,
+  updatePrediction,
+} from "../controllers/predictionController";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Prediction routes placeholder" });
-});
+router.get("/latest", getLatestPrediction);
+router.get("/", listPredictions);
+router.post("/", createPrediction);
+router.get("/:id", getPrediction);
+router.patch("/:id", updatePrediction);
+router.delete("/:id", deletePrediction);
 
 export default router;

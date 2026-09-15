@@ -1,10 +1,15 @@
 // src/routes/riskRoutes.ts
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import {
+  getProjectRisk,
+  listRisks,
+  recalculateProjectRisk,
+} from "../controllers/riskController";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Risk routes placeholder" });
-});
+router.get("/", listRisks);
+router.post("/:projectId/recalculate", recalculateProjectRisk);
+router.get("/:projectId", getProjectRisk);
 
 export default router;

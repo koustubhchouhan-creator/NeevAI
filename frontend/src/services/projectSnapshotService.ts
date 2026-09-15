@@ -1,22 +1,9 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  serverTimestamp,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import type { ProjectSnapshot } from "../../../shared/types";
 
-import { db } from "../firebase/firebase";
+import { api, getOrNull } from "./apiClient";
 
-import type {
-  ProjectSnapshot,
-} from "../../../shared/types";
-
-const SNAPSHOTS_COLLECTION = "projectSnapshots";
+const projectSnapshotsPath = (projectId: string): string =>
+  `/projects/${encodeURIComponent(projectId)}/snapshots`;
 
 /**
  * Create a new project snapshot
@@ -27,47 +14,23 @@ export const createProjectSnapshot = async (
     "id" | "createdAt" | "updatedAt"
   >
 ): Promise<string> => {
-  const docRef = await addDoc(
-    collection(db, SNAPSHOTS_COLLECTION),
-    {
-      ...snapshot,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    }
+  const created = await api.post<ProjectSnapshot>(
+    projectSnapshotsPath(snapshot.projectId),
+    snapshot
   );
 
-  return docRef.id;
+  return created.id ?? "";
 };
 
 /**
- * Get all snapshots for a project
+ * Get all snapshots for a project (newest first)
  */
 export const getProjectSnapshots = async (
   projectId: string
 ): Promise<ProjectSnapshot[]> => {
-  const snapshotsQuery = query(
-    collection(db, SNAPSHOTS_COLLECTION),
-    where("projectId", "==", projectId)
+  return api.get<ProjectSnapshot[]>(
+    projectSnapshotsPath(projectId)
   );
-
-  const snapshot = await getDocs(snapshotsQuery);
-
-  const snapshots = snapshot.docs.map((document) => ({
-    id: document.id,
-    ...document.data(),
-  })) as ProjectSnapshot[];
-
-  return snapshots.sort((a, b) => {
-    const dateA = new Date(
-      a.reportDate as string
-    ).getTime();
-
-    const dateB = new Date(
-      b.reportDate as string
-    ).getTime();
-
-    return dateB - dateA;
-  });
 };
 
 /**
@@ -76,14 +39,11 @@ export const getProjectSnapshots = async (
 export const getLatestProjectSnapshot = async (
   projectId: string
 ): Promise<ProjectSnapshot | null> => {
-  const snapshots =
-    await getProjectSnapshots(projectId);
-
-  if (snapshots.length === 0) {
-    return null;
-  }
-
-  return snapshots[0];
+  return getOrNull(() =>
+    api.get<ProjectSnapshot>(
+      `${projectSnapshotsPath(projectId)}/latest`
+    )
+  );
 };
 
 /**
@@ -93,16 +53,10 @@ export const updateProjectSnapshot = async (
   id: string,
   updates: Partial<ProjectSnapshot>
 ): Promise<void> => {
-  const documentRef = doc(
-    db,
-    SNAPSHOTS_COLLECTION,
-    id
+  await api.patch<ProjectSnapshot>(
+    `/projects/snapshots/${encodeURIComponent(id)}`,
+    updates
   );
-
-  await updateDoc(documentRef, {
-    ...updates,
-    updatedAt: serverTimestamp(),
-  });
 };
 
 /**
@@ -111,16 +65,10 @@ export const updateProjectSnapshot = async (
 export const deleteProjectSnapshot = async (
   id: string
 ): Promise<void> => {
-  const documentRef = doc(
-    db,
-    SNAPSHOTS_COLLECTION,
-    id
+  await api.delete(
+    `/projects/snapshots/${encodeURIComponent(id)}`
   );
-
-  await deleteDoc(documentRef);
 };
-
-
 
 /**
  * Get all project snapshots
@@ -128,20 +76,5 @@ export const deleteProjectSnapshot = async (
 export const getAllProjectSnapshots = async (): Promise<
   ProjectSnapshot[]
 > => {
-  const snapshotCollection = collection(
-    db,
-    SNAPSHOTS_COLLECTION
-  );
-
-  const snapshot = await getDocs(
-    snapshotCollection
-  );
-
-  return snapshot.docs.map(
-    (document) =>
-      ({
-        id: document.id,
-        ...document.data(),
-      }) as ProjectSnapshot
-  );
+  return api.get<ProjectSnapshot[]>("/projects/snapshots");
 };

@@ -16,7 +16,13 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(",")
+      : true,
+  }),
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -24,12 +30,24 @@ app.use(morgan("dev"));
 const apiPrefix = "/api/v1";
 
 app.use(`${apiPrefix}/health`, healthRouter);
+
+// Snapshot routes are mounted before project routes so that the flat
+// `/projects/snapshots` path is not captured by `/projects/:id`.
+app.use(`${apiPrefix}/projects`, snapshotRouter);
 app.use(`${apiPrefix}/projects`, projectRouter);
-app.use(`${apiPrefix}/projects`, snapshotRouter); // snapshot routes are nested under projects
+
 app.use(`${apiPrefix}/analytics`, analyticsRouter);
 app.use(`${apiPrefix}/risk`, riskRouter);
 app.use(`${apiPrefix}/comparison`, comparisonRouter);
 app.use(`${apiPrefix}/predictions`, predictionRouter);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    status: "error",
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
 
 // Global error handler
 app.use(errorHandler);
