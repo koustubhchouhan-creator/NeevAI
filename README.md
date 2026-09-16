@@ -19,6 +19,7 @@ Infrastructure projects can suffer from schedule delays, cost overruns, slow phy
 - Add Project form
 - Edit Project form
 - Project Details view
+- Predictions and risk-ranking view
 - Loading and error states
 - Dashboard refresh
 - Shared TypeScript types

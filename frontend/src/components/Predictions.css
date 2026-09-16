@@ -1,0 +1,789 @@
+/* =========================================
+   PREDICTIONS PAGE
+========================================= */
+
+.predictions-page {
+  width: 100%;
+  max-width: var(--page-max-width);
+
+  margin: 0 auto;
+}
+
+
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.predictions-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--spacing-xl);
+
+  margin-bottom: var(--spacing-2xl);
+}
+
+
+.predictions-title-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--spacing-lg);
+}
+
+
+.predictions-title-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-warning-soft);
+
+  color: var(--color-warning);
+}
+
+
+.predictions-header h1 {
+  margin: 0;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  color: var(--color-text-primary);
+}
+
+
+.predictions-header p {
+  margin: 6px 0 0;
+
+  font-size: 14px;
+
+  color: var(--color-text-muted);
+}
+
+
+/* =========================================
+   REFRESH BUTTON
+========================================= */
+
+.predictions-refresh-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--spacing-sm);
+
+  padding: 11px 18px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-card);
+
+  color: var(--color-text-secondary);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+
+.predictions-refresh-button:hover {
+  background: var(--color-card-hover);
+
+  border-color: var(--color-primary);
+
+  color: var(--color-text-primary);
+}
+
+
+/* =========================================
+   SUMMARY METRICS
+========================================= */
+
+.predictions-metrics-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: var(--spacing-lg);
+
+  margin-bottom: var(--spacing-2xl);
+}
+
+
+.prediction-metric-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--spacing-lg);
+
+  padding: var(--spacing-xl);
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-card);
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+
+.prediction-metric-card:hover {
+  background: var(--color-card-hover);
+}
+
+
+.prediction-metric-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary-soft);
+
+  color: var(--color-primary);
+}
+
+
+.prediction-metric-card span {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--color-text-muted);
+}
+
+
+.prediction-metric-card h2 {
+  margin: 6px 0 0;
+
+  font-size: 26px;
+  font-weight: 700;
+
+  color: var(--color-text-primary);
+}
+
+
+.prediction-metric-critical .prediction-metric-icon {
+  background: var(--color-danger-soft);
+
+  color: var(--color-danger);
+}
+
+
+.prediction-metric-medium .prediction-metric-icon {
+  background: var(--color-warning-soft);
+
+  color: var(--color-warning);
+}
+
+
+.prediction-metric-low .prediction-metric-icon {
+  background: var(--color-success-soft);
+
+  color: var(--color-success);
+}
+
+
+.prediction-metric-unscored .prediction-metric-icon {
+  background: var(--color-info-soft);
+
+  color: var(--color-info);
+}
+
+
+/* =========================================
+   LAYOUT
+========================================= */
+
+.predictions-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(320px, 1fr)
+    minmax(360px, 1.2fr);
+
+  gap: var(--spacing-xl);
+
+  align-items: start;
+}
+
+
+.predictions-card {
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-card);
+
+  padding: var(--spacing-xl);
+}
+
+
+.predictions-card-header {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: var(--spacing-lg);
+
+  margin-bottom: var(--spacing-lg);
+}
+
+
+.predictions-card-header h2 {
+  margin: 0;
+
+  font-size: 17px;
+  font-weight: 700;
+
+  color: var(--color-text-primary);
+}
+
+
+.predictions-card-header p {
+  margin: 5px 0 0;
+
+  font-size: 13px;
+
+  color: var(--color-text-muted);
+}
+
+
+/* =========================================
+   RANKING LIST
+========================================= */
+
+.predictions-ranking-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--spacing-sm);
+}
+
+
+.predictions-ranking-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--spacing-md);
+
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--color-border-light);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-input);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+
+.predictions-ranking-row:hover {
+  background: var(--color-card-hover);
+}
+
+
+.predictions-ranking-row.active {
+  border-color: var(--color-primary);
+
+  background: var(--color-primary-soft);
+}
+
+
+.predictions-ranking-main {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.predictions-ranking-main strong {
+  font-size: 14px;
+  font-weight: 600;
+
+  color: var(--color-text-primary);
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.predictions-ranking-id {
+  font-size: 12px;
+
+  color: var(--color-text-muted);
+}
+
+
+.predictions-ranking-score {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--spacing-sm);
+}
+
+
+.predictions-ranking-score > span:first-child {
+  font-size: 14px;
+  font-weight: 700;
+
+  color: var(--color-text-secondary);
+}
+
+
+.predictions-ranking-chevron {
+  color: var(--color-text-muted);
+}
+
+
+/* =========================================
+   RISK BADGES
+========================================= */
+
+.prediction-risk-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 4px 10px;
+
+  border-radius: var(--radius-full);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.prediction-risk-critical {
+  background: var(--color-danger-soft);
+
+  color: var(--color-danger);
+}
+
+
+.prediction-risk-high {
+  background: var(--color-danger-soft);
+
+  color: var(--color-danger);
+}
+
+
+.prediction-risk-medium {
+  background: var(--color-warning-soft);
+
+  color: var(--color-warning);
+}
+
+
+.prediction-risk-low {
+  background: var(--color-success-soft);
+
+  color: var(--color-success);
+}
+
+
+.prediction-risk-unknown {
+  background: var(--color-info-soft);
+
+  color: var(--color-info);
+}
+
+
+/* =========================================
+   OVERALL SCORE PANEL
+========================================= */
+
+.predictions-score-panel {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--spacing-sm);
+
+  padding: var(--spacing-lg);
+
+  margin-bottom: var(--spacing-lg);
+
+  border: 1px solid var(--color-border-light);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-input);
+}
+
+
+.predictions-score-panel > div:first-child {
+  display: flex;
+
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+
+.predictions-score-panel span {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--color-text-muted);
+}
+
+
+.predictions-score-panel strong {
+  font-size: 24px;
+  font-weight: 700;
+
+  color: var(--color-text-primary);
+}
+
+
+.predictions-score-panel strong small {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--color-text-muted);
+}
+
+
+.predictions-score-bar,
+.predictions-component-bar {
+  width: 100%;
+
+  height: 8px;
+
+  border-radius: var(--radius-full);
+
+  background: var(--progress-track);
+
+  overflow: hidden;
+}
+
+
+.predictions-score-fill {
+  height: 100%;
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary);
+
+  transition: width var(--transition-normal);
+}
+
+
+.predictions-data-status {
+  font-size: 12px;
+
+  color: var(--color-text-muted);
+
+  text-transform: capitalize;
+}
+
+
+/* =========================================
+   EARLY WARNING
+========================================= */
+
+.predictions-warning {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: var(--spacing-md);
+
+  padding: var(--spacing-lg);
+
+  margin-bottom: var(--spacing-lg);
+
+  border: 1px solid rgba(224, 98, 107, 0.32);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-danger-soft);
+
+  color: var(--color-danger);
+}
+
+
+.predictions-warning strong {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  margin-bottom: 4px;
+}
+
+
+.predictions-warning p {
+  margin: 0;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+  color: var(--color-text-secondary);
+}
+
+
+/* =========================================
+   COMPONENT BREAKDOWN
+========================================= */
+
+.predictions-components {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--spacing-md);
+
+  margin-bottom: var(--spacing-lg);
+}
+
+
+.predictions-component-head {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+}
+
+
+.predictions-component-label {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--spacing-sm);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--color-text-secondary);
+}
+
+
+.predictions-component-head strong {
+  font-size: 14px;
+  font-weight: 700;
+
+  color: var(--color-text-primary);
+}
+
+
+.predictions-component-fill {
+  height: 100%;
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-warning);
+
+  transition: width var(--transition-normal);
+}
+
+
+/* =========================================
+   DERIVED METRICS
+========================================= */
+
+.predictions-derived {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: var(--spacing-sm);
+}
+
+
+.prediction-derived-item {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--spacing-sm);
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--color-border-light);
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-input);
+}
+
+
+.prediction-derived-item span {
+  font-size: 12px;
+
+  color: var(--color-text-muted);
+}
+
+
+.prediction-derived-item strong {
+  font-size: 13px;
+  font-weight: 700;
+
+  color: var(--color-text-primary);
+}
+
+
+/* =========================================
+   EMPTY / MESSAGE STATES
+========================================= */
+
+.predictions-empty {
+  padding: var(--spacing-2xl) var(--spacing-lg);
+
+  text-align: center;
+
+  font-size: 14px;
+
+  color: var(--color-text-muted);
+}
+
+
+.predictions-message {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: var(--spacing-lg);
+
+  padding: var(--spacing-3xl);
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-card);
+
+  font-size: 15px;
+
+  color: var(--color-text-secondary);
+}
+
+
+.predictions-error {
+  color: var(--color-danger);
+}
+
+
+.predictions-message button {
+  padding: 10px 20px;
+
+  border: none;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary);
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background var(--transition-fast);
+}
+
+
+.predictions-message button:hover {
+  background: var(--color-primary-hover);
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1080px) {
+
+  .predictions-layout {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 640px) {
+
+  .predictions-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
+  .predictions-refresh-button {
+    width: 100%;
+  }
+
+
+  .predictions-score-panel > div:first-child {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 4px;
+  }
+
+}

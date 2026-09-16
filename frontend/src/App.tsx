@@ -8,6 +8,7 @@ import Dashboard from "./components/Dashboard";
 
 import Projects from "./components/Projects";
 import Analytics from "./components/Analytics";
+import Predictions from "./components/Predictions";
 
 
 function App() {
@@ -39,6 +40,14 @@ function App() {
         <Route
           path="/analytics"
           element={<Analytics />}
+        />
+
+
+        {/* PREDICTIONS */}
+
+        <Route
+          path="/predictions"
+          element={<Predictions />}
         />
 
 

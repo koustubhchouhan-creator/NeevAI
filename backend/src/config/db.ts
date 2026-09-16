@@ -15,7 +15,15 @@ export async function connectDB(mongoUri?: string): Promise<void> {
 
   if (!uri) {
     const { MongoMemoryServer } = await import("mongodb-memory-server");
-    const server = await MongoMemoryServer.create();
+    const server = await MongoMemoryServer.create({
+      instance: {
+        // Generous default: first startup may need to unpack the mongod
+        // binary, which can take longer than the library's 10s default.
+        launchTimeout: Number(
+          process.env.MONGOMS_STARTUP_TIMEOUT,
+        ) || 60000,
+      },
+    });
     uri = server.getUri();
     memoryServer = server;
     console.log("Using in-memory MongoDB (data is not persisted)");
